@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.cloud.bindings.Binding;
+import org.springframework.cloud.bindings.Bindings;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -62,12 +64,27 @@ public class SpringApplicationContextInitializer implements ApplicationContextIn
         List<String> serviceNames = services.stream()
                 .map(CfService::getName)
                 .collect(Collectors.toList());
-
+        
         logger.info("Found services " + StringUtils.collectionToCommaDelimitedString(serviceNames));
 
         for (CfService service : services) {
             for (String profileKey : profileNameToServiceTags.keySet()) {
                 if (service.getTags().containsAll(profileNameToServiceTags.get(profileKey))) {
+                    profiles.add(profileKey);
+                }
+            }
+        }
+
+        List<Binding> bindings = new Bindings().getBindings();
+        List<String> bindingNames = bindings.stream()
+            .map(Binding::getName)
+            .collect(Collectors.toList());
+
+        logger.info("Found bindings " + StringUtils.collectionToCommaDelimitedString(bindingNames));
+
+        for (Binding binding : bindings) {
+            for (String profileKey : profileNameToServiceTags.keySet()) {
+                if (binding.getType().equals(profileNameToServiceTags.get(profileKey).get(0))) {
                     profiles.add(profileKey);
                 }
             }

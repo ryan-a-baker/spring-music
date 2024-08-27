@@ -3,15 +3,15 @@
 *.ids
 *.iws
 .idea/
-
+.vscode/
 .project
 .metadata
 local.properties
 .classpath
 .settings/
 .loadpath
-
-
+preprovisionedservice.yaml
+secret-mysql-rw-global.yaml
 target/
 
 .gradle

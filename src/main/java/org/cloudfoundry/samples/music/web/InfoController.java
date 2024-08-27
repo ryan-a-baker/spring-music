@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.cloudfoundry.samples.music.domain.ApplicationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.bindings.Binding;
+import org.springframework.cloud.bindings.Bindings;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +59,13 @@ public class InfoController {
         for (CfService service : services) {
             names.add(service.getName());
         }
+
+        List<Binding> bindings = new Bindings().getBindings();
+        List<String> bindingNames = bindings.stream()
+            .map(Binding::getName)
+            .collect(Collectors.toList());
+        names.addAll(bindingNames);
+        
         return names.toArray(new String[0]);
     }
 }
